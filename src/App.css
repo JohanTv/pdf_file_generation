@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.rojo {
+  background-color: red;
+}
+
+.verde {
+  background-color: green;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
