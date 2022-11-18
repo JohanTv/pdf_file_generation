@@ -1,10 +1,12 @@
 import React from 'react'
 
-import { artwork } from '../constant/artwork'
+import { artwork, headers, util } from '../constant/util'
 
 export const ExcelTable = () => {
 	const execute = () => {
-		
+		const exportDataToXlxs = () => {
+
+		}
 	}
 	return (
         <div>

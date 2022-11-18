@@ -3,22 +3,13 @@ import React from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
-import { artwork } from '../constant/artwork'
+import { artwork, headers, keys } from '../constant/util'
 
 export const PDFTable = () => {
     const execute = () => {
-        const headers = ["ID", "Titulo", "Autor", "Año/Periodo", "Estado", "Categoria", "Tipo", "Tecnica", 
-                            "Dimension", "Pais", "Ciudad", "Sublocacion", "Moneda", "Precio"]
-        
-        const keys = ["id", "name", "author.name", "year_period", "condition", "category.name", 
-                            "artwork_type.name", "technique.name", "dimensions", "location_country", 
-                            "location_city.name", "sublocation", "currency", "price"]
-        
         const artworks = []
-
-        for(let i = 1; i <= 100; i++){
+        for(let i = 1; i <= 100; i++)
             artworks.push(artwork)
-        }
 
         const getArtworksData = (artworks, keys, separator = '.') => {
             return artworks.map((_artwork) =>

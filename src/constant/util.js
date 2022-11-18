@@ -1,3 +1,10 @@
+export const headers = ["ID", "Titulo", "Autor", "Año/Periodo", "Estado", "Categoria", "Tipo", "Tecnica",
+    "Dimension", "Pais", "Ciudad", "Sublocacion", "Moneda", "Precio"]
+
+export const keys = ["id", "name", "author.name", "year_period", "condition", "category.name",
+    "artwork_type.name", "technique.name", "dimensions", "location_country",
+    "location_city.name", "sublocation", "currency", "price"]
+
 export const artwork = {
     "id": 1001,
     "name": "Mona Lisa",
