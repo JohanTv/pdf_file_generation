@@ -1,4 +1,4 @@
-export const headers = ["ID", "Titulo", "Autor", "Año/Periodo", "Estado", "Categoria", "Tipo", "Tecnica",
+export const headers = ["ID", "Titulo", "Autor", "Año/Epoca", "Estado", "Categoria", "Tipo", "Tecnica",
     "Dimension", "Pais", "Ciudad", "Sublocacion", "Moneda", "Precio"]
 
 export const keys = ["id", "name", "author.name", "year_period", "condition", "category.name",
