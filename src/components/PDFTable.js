@@ -23,13 +23,14 @@ export const PDFTable = () => {
 
         const exportDataToPDF = (headers, data) => {
             const filename = "reporte_obras.pdf"
+            const fontSize = 6
             const options = {
                 orientation: "portrait",
                 unit: "px",
                 format: "a4"
             }
             const doc = new jsPDF(options)
-            doc.setFont("Helvetica", "bold")
+            doc.setFont("helvetica", "bold")
             doc.setFontSize(12)
             const text = "REPORTE DE OBRAS DE ARTE"
             const textWidth = doc.getTextWidth(text)
@@ -40,9 +41,18 @@ export const PDFTable = () => {
             autoTable(doc, {
                 styles: {
                     overflow: 'linebreak',
-                    fontSize: 6,
+                    font: "helvetica",
+                    fontSize: fontSize,
                     lineWidth: 0.01,
-                    lineColor: [0, 0, 0]
+                    lineColor: [0, 0, 0],
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                bodyStyles: {
+                    textColor: [0, 0, 0]
+                },
+                alternateRowStyles: {
+                    fillColor: [245, 245, 245]
                 },
                 tableWidth: "wrap",
                 head: [headers],
