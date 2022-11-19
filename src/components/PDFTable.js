@@ -8,7 +8,7 @@ import { artwork, headers, keys, getArtworksData } from '../constant/util'
 export const PDFTable = () => {
     const execute = () => {
         const artworks = []
-        for(let i = 1; i <= 100; i++)
+        for(let i = 1; i <= 50; i++)
             artworks.push(artwork)
 
         const exportDataToPDF = (headers, data) => {
