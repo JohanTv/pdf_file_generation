@@ -64,6 +64,9 @@ export const artwork = {
     "timestamp": "2022-11-17T08:15:15.744258Z"
 }
 
+/*
+    Add exception when doesn't exists some key
+*/
 export const getArtworksData = (_artworks, _keys, _separator = '.') => {
     return _artworks.map((_artwork) =>
         _keys.map((key) =>

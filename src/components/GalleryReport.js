@@ -34,12 +34,24 @@ export const GalleryReport = () => {
             doc.text("Galeria", x, y + doc.getTextDimensions("A").h)
             
             // Artwork pages
-            for(let i = 0; i < data.length; i++){
+            const font = "helvetica"
+            const fontSize = 12
+            doc.setFont(font, "normal")
+            doc.setFontSize(fontSize)
+            for(let i = 0; i < data.length; i++) {
+                if(i === 1) console.log("avoid")
+                doc.addPage(format, orientation)
+                const posx = doc.internal.pageSize.width / 2
+                const posy = doc.internal.pageSize.height / 2
+                for(let j = 0; j < data[i].length; j++){
+                    if(j === 0) doc.setFont(font, "bold")
+                    else if(j === 1) doc.setFont(font, "italic")
+                    else doc.setFont(font, "normal")
+                    doc.text(data[i][j], posx, posy + j * doc.getTextDimensions("A").h, { align: "center" })
+                }
             }
-            // doc.addPage(format, orientation)
 
             doc.save(filename)
-            doc.addImage()
         }
 
         const data = getArtworksData(artworks, keysForGalleryFormat)
