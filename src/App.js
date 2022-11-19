@@ -3,6 +3,7 @@ import './App.css';
 import { ExportTableInPDF } from './components/ExportTableInPDF';
 import { ExportTableInXlsx } from './components/ExportTableInXlsx';
 import { ExportGalleryReport } from './components/ExportGalleryReport';
+import { ExportArtworkTags } from './components/ExportArtworkTags';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <ExportTableInPDF/>
         <ExportTableInXlsx/>
         <ExportGalleryReport/>
+        <ExportArtworkTags/>
       </header>
     </div>
   )
