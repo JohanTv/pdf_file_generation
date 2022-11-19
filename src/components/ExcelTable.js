@@ -42,11 +42,11 @@ export const ExcelTable = () => {
 						fgColor: { argb: whiteColor }
 					}
 
-					if (i == 1) { // customize header
+					if (i === 1) { // customize header
 						cell.font.bold = true
 						cell.font.color.argb = whiteColor
 						cell.fill.fgColor.argb = 'ff2880ba'
-					} else if (i % 2 == 0) {
+					} else if (i % 2 === 0) {
 						cell.fill.fgColor.argb = alternateColor
 					}
 				})
