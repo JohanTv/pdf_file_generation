@@ -3,7 +3,7 @@ import * as Excel from "exceljs"
 import { saveAs } from "file-saver"
 import { artwork, headers, keys, getArtworksData } from '../constant/util'
 
-export const ExcelTable = () => {
+export const ExportTableInXlsx = () => {
 	const execute = () => {
 		const artworks = []
 		for (let i = 1; i <= 50; i++)

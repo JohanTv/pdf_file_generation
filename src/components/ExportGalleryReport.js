@@ -3,10 +3,9 @@ import jsPDF from 'jspdf'
 import testImage from '../static/images/test.png'
 import testImage2 from '../static/images/logo192.png'
 import testImage3 from '../static/images/logo512.png'
-
 import { artwork, keysForGalleryFormat, getArtworksData } from '../constant/util'
 
-export const GalleryReport = () => {
+export const ExportGalleryReport = () => {
     const execute = () => {
         const artworks = []
         const images = [testImage, testImage2, testImage3, testImage3, testImage3] 

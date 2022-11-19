@@ -1,11 +1,9 @@
 import React from 'react'
-
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-
 import { artwork, headers, keys, getArtworksData } from '../constant/util'
 
-export const PDFTable = () => {
+export const ExportTableInPDF = () => {
     const execute = () => {
         const artworks = []
         for(let i = 1; i <= 50; i++)
