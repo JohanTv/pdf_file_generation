@@ -24,25 +24,41 @@ export const GalleryReport = () => {
             const doc = new jsPDF(options)
             
             // First Page
-            const width = doc.internal.pageSize.width
-            const height = doc.internal.pageSize.height
-            const x = width / 2, y = height / 2
+            const pageWidth = doc.internal.pageSize.width
+            const pageHeight = doc.internal.pageSize.height
+            const x = pageWidth / 2, y = pageHeight / 2
             doc.setFont("helvetica", "bold")
             doc.setFontSize(24)
             doc.text("Obras de arte", x, y)
             doc.setFont("helvetica", "bolditalic")
             doc.text("Galeria", x, y + doc.getTextDimensions("A").h)
-            
+
             // Artwork pages
             const font = "helvetica"
             const fontSize = 12
-            doc.setFont(font, "normal")
             doc.setFontSize(fontSize)
             for(let i = 0; i < data.length; i++) {
-                if(i === 1) console.log("avoid")
                 doc.addPage(format, orientation)
+
+                // Artwork image
+                const image = images[i]
+                const imageProperties = doc.getImageProperties(image)
+
+                const widthRatio = pageWidth / imageProperties.width;
+                const heightRatio = pageHeight / imageProperties.height;
+                const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
+
+                const imageWidth = imageProperties.width * ratio * 0.65;
+                const imageHeight = imageProperties.height * ratio * 0.65;
+
+                const marginX = (pageWidth - imageWidth) / 2;
+                const marginY = (pageHeight - imageHeight) / 2;
+                
+                doc.addImage(image, imageProperties.fileType, marginX, marginY, imageWidth, imageHeight)
+
+                // Artwork information
                 const posx = doc.internal.pageSize.width / 2
-                const posy = doc.internal.pageSize.height / 2
+                const posy = marginY + imageHeight + 10
                 for(let j = 0; j < data[i].length; j++){
                     if(j === 0) doc.setFont(font, "bold")
                     else if(j === 1) doc.setFont(font, "italic")
@@ -56,9 +72,6 @@ export const GalleryReport = () => {
 
         const data = getArtworksData(artworks, keysForGalleryFormat)
         exportGalleryFormatToPDF(data, images)
-        // doc.rect(x, y - dim.h + 1, dim.w + 1, dim.h)
-
-        
     }
 
     return (
