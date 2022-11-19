@@ -5,6 +5,8 @@ export const keys = ["id", "name", "author.name", "year_period", "condition", "c
     "artwork_type.name", "technique.name", "dimensions", "location_country",
     "location_city.name", "sublocation", "currency", "price"]
 
+export const keysForGalleryFormat = ["author.name", "name", "tecnique.name", "dimensions"]
+
 export const artwork = {
     "id": 1001,
     "name": "Mona Lisa",
@@ -60,4 +62,14 @@ export const artwork = {
         "client_role": 1
     },
     "timestamp": "2022-11-17T08:15:15.744258Z"
+}
+
+export const getArtworksData = (artworks, keys, separator = '.') => {
+    return artworks.map((_artwork) =>
+        keys.map((key) =>
+            key.split(separator).reduce((prev, current) =>
+                prev === null ? null : prev[current]
+                , _artwork)
+        )
+    )
 }

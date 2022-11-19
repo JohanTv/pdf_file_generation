@@ -1,23 +1,13 @@
 import React from 'react'
 import * as Excel from "exceljs"
 import { saveAs } from "file-saver"
-import { artwork, headers, keys } from '../constant/util'
+import { artwork, headers, keys, getArtworksData } from '../constant/util'
 
 export const ExcelTable = () => {
 	const execute = () => {
 		const artworks = []
 		for (let i = 1; i <= 100; i++)
 			artworks.push(artwork)
-
-		const getArtworksData = (artworks, keys, separator = '.') => {
-			return artworks.map((_artwork) =>
-				keys.map((key) =>
-					key.split(separator).reduce((prev, current) =>
-						prev === null ? null : prev[current]
-						, _artwork)
-				)
-			)
-		}
 
 		const addStylesToWorksheet = (worksheet) => {
 			const whiteColor = "ffffffff"

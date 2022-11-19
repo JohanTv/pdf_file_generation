@@ -3,23 +3,13 @@ import React from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
-import { artwork, headers, keys } from '../constant/util'
+import { artwork, headers, keys, getArtworksData } from '../constant/util'
 
 export const PDFTable = () => {
     const execute = () => {
         const artworks = []
         for(let i = 1; i <= 100; i++)
             artworks.push(artwork)
-
-        const getArtworksData = (artworks, keys, separator = '.') => {
-            return artworks.map((_artwork) =>
-                keys.map((key) =>
-                    key.split(separator).reduce((prev, current) =>
-                        prev === null ? null : prev[current]
-                    , _artwork)
-                )
-            )
-        }
 
         const exportDataToPDF = (headers, data) => {
             const filename = "reporte_obras.pdf"
