@@ -19,7 +19,7 @@ export const ExcelTable = () => {
 			)
 		}
 
-		const addStylesToWorkSheet = (worksheet) => {
+		const addStylesToWorksheet = (worksheet) => {
 			const whiteColor = "ffffffff"
 			const blackColor = "ff040404"
 			const alternateColor = "fff5f5f5"
@@ -82,7 +82,7 @@ export const ExcelTable = () => {
 			worksheet.columns = _headers
 			worksheet.addRows(data)
 
-			addStylesToWorkSheet(worksheet)
+			addStylesToWorksheet(worksheet)
 
 			workbook.xlsx.writeBuffer()
 				.then((buffer) => {
