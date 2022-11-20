@@ -7,7 +7,7 @@ export const ExportArtworkTags = () => {
     const execute = () => {
         const artworks = []
         const images = []
-        for (let i = 1; i <= 22; i++){
+        for (let i = 1; i <= 21; i++){
             artworks.push(artwork)
             images.push(testImage2)
         }
@@ -108,7 +108,7 @@ export const ExportArtworkTags = () => {
                         textMarginY = (tagHeight - (tagMarginY + imageHeight)) * 0.05
                     }
 
-                    // Define fontSize - missing
+                    // Define fontSize
                     const spaceRequired = (element, space) => {
                         if(space === "width"){
                             return element.reduce((prev, current) => {
@@ -126,7 +126,8 @@ export const ExportArtworkTags = () => {
                     
                     const heightRequired = spaceRequired(data[idx], "height")
                     let spaceWidth, spaceHeight
-                    if (tagOrientation === "horizontal"){
+                    if (tagOrientation === "horizontal") {
+                        // bug align === center
                         spaceWidth = tagWidth - (2 * tagMarginX + imageWidth + textMarginX)
                         spaceHeight = tagHeight - (2 * tagMarginY)
                     } else {
@@ -147,8 +148,8 @@ export const ExportArtworkTags = () => {
                         fontSize = spaceWidth * fontWidthFactor
                         doc.setFontSize(fontSize)
                     }
-                    
                     doc.setFontSize(doc.getFontSize() * 0.9)
+
                     // Artwork information
                     let posx, posy
                     if (tagOrientation === "horizontal") {
@@ -169,7 +170,10 @@ export const ExportArtworkTags = () => {
                     }
 
                     idx++
-                    // if(idx >= data.length) exit = true
+                    if(idx >= data.length) {
+                        exit = true
+                        break
+                    }
                 }
                 if(exit) break
             }
@@ -184,14 +188,16 @@ export const ExportArtworkTags = () => {
                     columns: 2,
                     width: 99.0,
                     height: 38.1,
-                    drawImageRectangle: true
+                    drawImageRectangle: true,
+                    align: "center"
                 },
                 num_22: {
                     rows: 11,
                     columns: 2,
                     width: 99.0,
                     height: 25.4,
-                    drawImageRectangle: true
+                    drawImageRectangle: true,
+                    align: "center"
                 }
             }
         }
