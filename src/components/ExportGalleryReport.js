@@ -51,8 +51,9 @@ export const ExportGalleryReport = () => {
                 const heightRatio = pageHeight / imageProperties.height;
                 const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
 
-                const imageWidth = imageProperties.width * ratio * 0.65;
-                const imageHeight = imageProperties.height * ratio * 0.65;
+                const factor = 0.65
+                const imageWidth = imageProperties.width * ratio * factor;
+                const imageHeight = imageProperties.height * ratio * factor;
 
                 const marginX = (pageWidth - imageWidth) / 2;
                 const marginY = (pageHeight - imageHeight) / 2;
