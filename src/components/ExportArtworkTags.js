@@ -59,6 +59,7 @@ export const ExportArtworkTags = () => {
             const pageMarginY = (pageHeight - (tagHeight * rows + rowSpacing * (rows - 1))) / 2
 
             let idx = 0
+            let exit = false
             for(let i = 0; i < rows; i++) {
                 for(let j = 0; j < columns; j++) {
                     doc.setFont(font, "bold")
@@ -109,7 +110,7 @@ export const ExportArtworkTags = () => {
 
                     // Define fontSize - missing
                     const spaceRequired = (element, space) => {
-                        if(space === "width")
+                        if(space === "width"){
                             return element.reduce((prev, current) => {
                                 let value = null
                                 if (!current) value = 0
@@ -119,23 +120,25 @@ export const ExportArtworkTags = () => {
                                     value = doc.getTextDimensions(current.toString()).w
                                 return Math.max(prev, value)
                             }, 0)
+                        }
                         return doc.getTextDimensions("A").h * element.length
                     }
                     
                     const heightRequired = spaceRequired(data[idx], "height")
-                    console.log("height chr = " + doc.getTextDimensions("A").h)
-                    console.log("height required = " + heightRequired)
-                    const fontHeightFactor = doc.getFontSize() / (heightRequired / data[idx].length)
                     let spaceWidth, spaceHeight
                     if (tagOrientation === "horizontal"){
-                        spaceWidth = tagWidth - (tagMarginX + imageWidth + 2 * textMarginX)
-                        spaceHeight = tagHeight - (tagMarginY + 2 * textMarginY)
+                        spaceWidth = tagWidth - (2 * tagMarginX + imageWidth + textMarginX)
+                        spaceHeight = tagHeight - (2 * tagMarginY)
                     } else {
-                        spaceWidth = tagWidth - (tagMarginX + 2 * textMarginX)
-                        spaceHeight = tagHeight - (tagMarginY + imageHeight + 2 * textMarginY)
+                        spaceWidth = tagWidth - (2 * tagMarginX)
+                        spaceHeight = tagHeight - (2 * tagMarginY + imageHeight + textMarginY)
                     }
 
-                    let fontSize = (spaceHeight / data[idx].length) * fontHeightFactor
+                    const heightRequiredPerField = heightRequired / data[idx].length
+                    const heightPerField = spaceHeight / data[idx].length 
+                    
+                    const fontHeightFactor = doc.getFontSize() / heightRequiredPerField
+                    let fontSize =  heightPerField * fontHeightFactor
                     doc.setFontSize(fontSize)
 
                     const widthRequired = spaceRequired(data[idx], "width")
@@ -145,25 +148,30 @@ export const ExportArtworkTags = () => {
                         doc.setFontSize(fontSize)
                     }
                     
+                    doc.setFontSize(doc.getFontSize() * 0.9)
                     // Artwork information
                     let posx, posy
                     if (tagOrientation === "horizontal") {
                         posx = x + tagMarginX + imageWidth + textMarginX
-                        posy = y + tagMarginY + textMarginY
+                        posy = y + tagMarginY
                     } else {
-                        posx = x + tagMarginX + textMarginX
+                        posx = x + tagMarginX
                         posy = y + tagMarginY + imageHeight + textMarginY
                     }
-                    
+
+                    const characterHeight = doc.getTextDimensions("A").h
+                    const fieldSpacing = (imageHeight - characterHeight * data[idx].length) / (data[idx].length + 1) * 0.75
                     for(let info = 0; info < data[idx].length; info++){
                         if (info === 0) doc.setFont(font, "bold")
                         else if (info === 1) doc.setFont(font, "italic")
                         else doc.setFont(font, "normal")
-                        doc.text(data[idx][info], posx, posy + (info + 1) * doc.getTextDimensions("A").h, { align: align })
+                        doc.text(data[idx][info], posx, posy + (info + 1) * (characterHeight + fieldSpacing), { align: align })
                     }
 
                     idx++
+                    // if(idx >= data.length) exit = true
                 }
+                if(exit) break
             }
 
             doc.save(filename)
