@@ -102,9 +102,9 @@ export const ExportArtworkTags = () => {
                         textMarginX = (tagWidth - (tagMarginX + imageWidth)) * factor
                         textMarginY = (tagHeight - tagMarginY) * 0.05
                     } else {
-                        if(align === "left") textMarginX = (tagWidth - tagMarginX) * 0.05
-                        else if (align === "center") textMarginX = tagWidth * 0.5
-                        else if(align === "right") textMarginX = (tagWidth - tagMarginX) * 0.95
+                        if(align === "left") textMarginX = (tagWidth - 2 * tagMarginX) * 0.05
+                        else if (align === "center") textMarginX = (tagWidth - 2 * tagMarginX) * 0.5
+                        else if(align === "right") textMarginX = (tagWidth - 2 * tagMarginX) * 0.95
                         textMarginY = (tagHeight - (tagMarginY + imageHeight)) * 0.05
                     }
 
@@ -127,8 +127,11 @@ export const ExportArtworkTags = () => {
                     const heightRequired = spaceRequired(data[idx], "height")
                     let spaceWidth, spaceHeight
                     if (tagOrientation === "horizontal") {
-                        // bug align === center
-                        spaceWidth = tagWidth - (2 * tagMarginX + imageWidth + textMarginX)
+                        if(align === "left" || align === "right") 
+                            spaceWidth = tagWidth - (2 * tagMarginX + imageWidth + textMarginX)
+                        else if(align === "center")
+                            spaceWidth = tagWidth - (2 * tagMarginX + imageWidth)
+                        
                         spaceHeight = tagHeight - (2 * tagMarginY)
                     } else {
                         spaceWidth = tagWidth - (2 * tagMarginX)
@@ -137,7 +140,6 @@ export const ExportArtworkTags = () => {
 
                     const heightRequiredPerField = heightRequired / data[idx].length
                     const heightPerField = spaceHeight / data[idx].length 
-                    
                     const fontHeightFactor = doc.getFontSize() / heightRequiredPerField
                     let fontSize =  heightPerField * fontHeightFactor
                     doc.setFontSize(fontSize)
@@ -154,19 +156,25 @@ export const ExportArtworkTags = () => {
                     let posx, posy
                     if (tagOrientation === "horizontal") {
                         posx = x + tagMarginX + imageWidth + textMarginX
-                        posy = y + tagMarginY
+                        posy = y + tagMarginY + textMarginY
                     } else {
-                        posx = x + tagMarginX
+                        posx = x + tagMarginX + textMarginX
                         posy = y + tagMarginY + imageHeight + textMarginY
                     }
 
                     const characterHeight = doc.getTextDimensions("A").h
-                    const fieldSpacing = (imageHeight - characterHeight * data[idx].length) / (data[idx].length + 1) * 0.75
+                    const textHeight = characterHeight * data[idx].length
+                    let fieldSpacing
+                    if(tagOrientation == "horizontal")
+                        fieldSpacing = (tagHeight - (2 * (tagMarginY + textMarginY) + textHeight)) / (data[idx].length - 1)
+                    else
+                        fieldSpacing = (tagHeight - (2 * (tagMarginY + textMarginY) + imageHeight + textHeight)) / (data[idx].length - 1)
+
                     for(let info = 0; info < data[idx].length; info++){
                         if (info === 0) doc.setFont(font, "bold")
                         else if (info === 1) doc.setFont(font, "italic")
                         else doc.setFont(font, "normal")
-                        doc.text(data[idx][info], posx, posy + (info + 1) * (characterHeight + fieldSpacing), { align: align })
+                        doc.text(data[idx][info], posx, posy + (info + 1) * (characterHeight) + info * fieldSpacing, { align: align })
                     }
 
                     idx++
@@ -189,7 +197,7 @@ export const ExportArtworkTags = () => {
                     width: 99.0,
                     height: 38.1,
                     drawImageRectangle: true,
-                    align: "center"
+                    align: "left"
                 },
                 num_22: {
                     rows: 11,
@@ -197,7 +205,7 @@ export const ExportArtworkTags = () => {
                     width: 99.0,
                     height: 25.4,
                     drawImageRectangle: true,
-                    align: "center"
+                    align: "left"
                 }
             }
         }
