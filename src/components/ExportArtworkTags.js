@@ -57,10 +57,6 @@ export const ExportArtworkTags = () => {
             
             const pageMarginX = (pageWidth - (tagWidth * columns + columnSpacing * (columns - 1))) / 2
             const pageMarginY = (pageHeight - (tagHeight * rows + rowSpacing * (rows - 1))) / 2
-            
-            doc.setFont(font, "bold")
-            const fontHeightFactor = doc.getFontSize() / doc.getTextDimensions("A").h
-            const fontFactor = fontHeightFactor
 
             let idx = 0
             for(let i = 0; i < rows; i++) {
@@ -112,23 +108,41 @@ export const ExportArtworkTags = () => {
                     }
 
                     // Define fontSize - missing
-                    const fontSize = (imageHeight * 0.9) / data[idx].length * fontFactor
+                    const spaceRequired = (element, space) => {
+                        if(space === "width")
+                            return element.reduce((prev, current) => {
+                                let value = null
+                                if (!current) value = 0
+                                else if (typeof (current) === "string")
+                                    value = doc.getTextDimensions(current).w
+                                else if (typeof (current) !== "string")
+                                    value = doc.getTextDimensions(current.toString()).w
+                                return Math.max(prev, value)
+                            }, 0)
+                        return doc.getTextDimensions("A").h * element.length
+                    }
+                    
+                    const heightRequired = spaceRequired(data[idx], "height")
+                    console.log("height chr = " + doc.getTextDimensions("A").h)
+                    console.log("height required = " + heightRequired)
+                    const fontHeightFactor = doc.getFontSize() / (heightRequired / data[idx].length)
+                    let spaceWidth, spaceHeight
+                    if (tagOrientation === "horizontal"){
+                        spaceWidth = tagWidth - (tagMarginX + imageWidth + 2 * textMarginX)
+                        spaceHeight = tagHeight - (tagMarginY + 2 * textMarginY)
+                    } else {
+                        spaceWidth = tagWidth - (tagMarginX + 2 * textMarginX)
+                        spaceHeight = tagHeight - (tagMarginY + imageHeight + 2 * textMarginY)
+                    }
+
+                    let fontSize = (spaceHeight / data[idx].length) * fontHeightFactor
                     doc.setFontSize(fontSize)
-                    
-                    const spaceWidth = tagWidth - (tagMarginX + imageWidth + 2 * textMarginX)
-                    const widthNeeded = data[idx].reduce((prev, current) => {
-                        let value = null
-                        if (!current) value = 0
-                        else if (typeof (current) === "string") 
-                            value = doc.getTextDimensions(current).w
-                        else if (typeof (current) !== "string") 
-                            value = doc.getTextDimensions(current.toString()).w 
-                        return Math.max(prev, value)
-                    }, 0)
-                    
-                    if(widthNeeded > spaceWidth){
-                        const fontWidthFactor = doc.getFontSize() / widthNeeded
-                        doc.setFontSize(spaceWidth * fontWidthFactor)
+
+                    const widthRequired = spaceRequired(data[idx], "width")
+                    const fontWidthFactor = doc.getFontSize() / widthRequired
+                    if(widthRequired > spaceWidth){
+                        fontSize = spaceWidth * fontWidthFactor
+                        doc.setFontSize(fontSize)
                     }
                     
                     // Artwork information
@@ -161,13 +175,15 @@ export const ExportArtworkTags = () => {
                     rows: 7,
                     columns: 2,
                     width: 99.0,
-                    height: 38.1
+                    height: 38.1,
+                    drawImageRectangle: true
                 },
                 num_22: {
                     rows: 11,
                     columns: 2,
                     width: 99.0,
-                    height: 25.4
+                    height: 25.4,
+                    drawImageRectangle: true
                 }
             }
         }
