@@ -51,17 +51,17 @@ export const ExportGalleryReport = () => {
                 const heightRatio = pageHeight / imageProperties.height;
                 const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
 
-                const factor = 0.65
-                const imageWidth = imageProperties.width * ratio * factor;
-                const imageHeight = imageProperties.height * ratio * factor;
+                const imageFactor = 0.65
+                const imageWidth = imageProperties.width * ratio * imageFactor;
+                const imageHeight = imageProperties.height * ratio * imageFactor;
 
-                const marginX = (pageWidth - imageWidth) / 2;
-                const marginY = (pageHeight - imageHeight) / 2;
+                const marginX = (pageWidth - imageWidth) * 0.5;
+                const marginY = (pageHeight - imageHeight) * 0.5;
                 
                 doc.addImage(image, imageProperties.fileType, marginX, marginY, imageWidth, imageHeight)
 
                 // Artwork information
-                const posx = doc.internal.pageSize.width / 2
+                const posx = doc.internal.pageSize.width * 0.5
                 const posy = marginY + imageHeight + 10
                 for(let j = 0; j < data[i].length; j++){
                     if(j === 0) doc.setFont(font, "bold")
