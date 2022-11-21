@@ -5,19 +5,40 @@ import testImage2 from '../static/images/logo192.png'
 import testImage3 from '../static/images/logo512.png'
 import { artwork, keysForGalleryFormat, getArtworksData, exportTags } from '../constant/util'
 
-const exportGalleryFormatToPDF = (data, images) => {
+const exportGalleryFormatToPDF = (data, images, artworksPerSheet = 1) => {
     const filename = "obras_galeria.pdf"
-    const configuration = {
-        rows: 1,
+    let configuration = {
+        rows: artworksPerSheet,
         columns: 1,
-        width: 163.3,
-        height: 138.9,
         drawImageRectangle: false,
         drawTagRectangle: false,
-        align: "center",
-        tagOrientation: "vertical",
-        fontSizeMax: 14,
-        fieldSpacingMax: 0.5
+    }
+
+    if (artworksPerSheet == 1) {
+        configuration = {
+            ...configuration,
+            width: 163.3,
+            height: 138.9,
+            align: "center",
+            tagOrientation: "vertical",
+            fontSizeMax: 14,
+            fieldSpacingMax: 0.5
+        }
+    }
+    else {
+        const rowSpacing = 0.5
+        const marginX = 20, marginY = 20
+        const pageWidth = 210, pageHeight = 297
+        const width = pageWidth - 2 * marginX
+        const height = (pageHeight - 2 * marginY - rowSpacing * (artworksPerSheet - 1)) / artworksPerSheet 
+        configuration = {
+            ...configuration,
+            width: width,
+            height: height,
+            align: "left",
+            tagOrientation: "horizontal",
+            fontSizeMax: 12,
+        } 
     }
 
     exportTags(data, images, configuration, filename)    
@@ -34,7 +55,7 @@ export const ExportGalleryReport = () => {
         }
 
         const data = getArtworksData(artworks, keysForGalleryFormat)
-        exportGalleryFormatToPDF(data, images)
+        exportGalleryFormatToPDF(data, images, 3)
     }
 
     return (
