@@ -177,7 +177,11 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
                 else if (align === "right") factor = 0.95
 
                 if (tagOrientation === "horizontal") {
-                    textMarginX = (tagWidth - (tagMarginX + imageWidth)) * factor
+                    if(align === "right")
+                        textMarginX = (tagWidth - (2 * tagMarginX + imageWidth)) * factor
+                    else 
+                        textMarginX = (tagWidth - (tagMarginX + imageWidth)) * factor
+                    
                     textMarginY = (tagHeight - tagMarginY) * 0.05
                 } else {
                     textMarginX = (tagWidth - 2 * tagMarginX) * factor
@@ -203,17 +207,21 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
                 const heightRequired = spaceRequired(data[idx], "height")
                 let spaceWidth, spaceHeight
                 if (tagOrientation === "horizontal") {
-                    if (align === "left" || align === "right")
+                    if (align === "left")
                         spaceWidth = tagWidth - (2 * tagMarginX + imageWidth + textMarginX)
                     else if (align === "center")
                         spaceWidth = tagWidth - (2 * tagMarginX + imageWidth)
+                    else if (align === "right")
+                        spaceWidth = tagWidth - (2 * tagMarginX + imageWidth + textMarginX * (1 / factor) * (1 - factor))
 
                     spaceHeight = tagHeight - (2 * (tagMarginY + textMarginY))
                 } else {
-                    if (align === "left" || align === "right")
+                    if (align === "left")
                         spaceWidth = tagWidth - 2 * (tagMarginX + textMarginX)
                     else if (align === "center")
                         spaceWidth = tagWidth - 2 * (tagMarginX)
+                    else if (align === "right")
+                        spaceWidth = tagWidth - 2 * (tagMarginX + textMarginX * (1 / factor) * (1 - factor))
 
                     spaceHeight = tagHeight - (2 * (tagMarginY + textMarginY) + imageHeight)
                 }
