@@ -24,8 +24,7 @@ const exportGalleryFormatToPDF = (data, images, artworksPerSheet = 1) => {
             fontSizeMax: 14,
             fieldSpacingMax: 0.5
         }
-    }
-    else {
+    } else {
         const rowSpacing = 0.5
         const marginX = 20, marginY = 20
         const pageWidth = 210, pageHeight = 297
@@ -38,10 +37,22 @@ const exportGalleryFormatToPDF = (data, images, artworksPerSheet = 1) => {
             align: "left",
             tagOrientation: "horizontal",
             fontSizeMax: 12,
+            fieldSpacingMax: 0.5
         } 
     }
 
-    exportTags(data, images, configuration, filename)    
+    const firstPage = (doc) => {
+        const pageWidth = doc.internal.pageSize.width
+        const pageHeight = doc.internal.pageSize.height
+        const x = pageWidth / 2, y = pageHeight / 2
+        doc.setFont("helvetica", "bold")
+        doc.setFontSize(24)
+        doc.text("Obras de arte", x, y)
+        doc.setFont("helvetica", "bolditalic")
+        doc.text("Galeria", x, y + doc.getTextDimensions("A").h)
+    }
+
+    exportTags(data, images, configuration, filename, firstPage)
 }
 
 

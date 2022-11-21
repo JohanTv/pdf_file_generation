@@ -79,7 +79,7 @@ export const getArtworksData = (_artworks, _keys, _separator = '.') => {
     )
 }
 
-export const exportTags = (data, images, configuration, filename = "etiquetas.pdf") => {
+export const exportTags = (data, images, configuration, filename = "etiquetas.pdf", callbackAtStart = null) => {
     if (typeof (configuration) !== 'object')
         throw new Error("invalid configuration parameter")
     /*
@@ -122,6 +122,11 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
     if (!fitsProperly())
         throw new Error("does not fit properly")
 
+    if (callbackAtStart) {
+        callbackAtStart(doc)
+        doc.addPage(format, orientation)
+    }
+    
     const pageMarginX = (pageWidth - (tagWidth * columns + columnSpacing * (columns - 1))) / 2
     const pageMarginY = (pageHeight - (tagHeight * rows + rowSpacing * (rows - 1))) / 2
 
