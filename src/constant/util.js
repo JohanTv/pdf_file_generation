@@ -1,3 +1,5 @@
+import jsPDF from 'jspdf'
+
 export const headers = ["ID", "Titulo", "Autor", "Año/Epoca", "Estado", "Categoria", "Tipo", "Tecnica",
     "Dimension", "Pais", "Ciudad", "Sublocacion", "Moneda", "Precio"]
 
@@ -75,4 +77,193 @@ export const getArtworksData = (_artworks, _keys, _separator = '.') => {
                 , _artwork)
         )
     )
+}
+
+export const exportTags = (data, images, configuration, filename = "etiquetas.pdf") => {
+    if (typeof (configuration) !== 'object')
+        throw new Error("invalid configuration parameter")
+    /*
+        Manejar excepciones
+        - Asignar automaticamente el numero de filas y columnas a partir del ancho y alto
+        - Asignar automaticamente el ancho y alto a partir del numero de filas y columnas
+    */
+
+    const { width: tagWidth, height: tagHeight, rows, columns } = configuration
+    const drawImageRectangle = configuration.drawImageRectangle || Boolean(false)
+    const drawTagRectangle = configuration.drawTagRectangle && Boolean(true)
+    const align = configuration.align || "left"
+    const font = configuration.font || "helvetica"
+    const rowSpacing = configuration.rowSpacing || 0.5
+    const columnSpacing = configuration.columnSpacing || 0.5
+    const tagOrientation = configuration.tagOrientation || "horizontal"
+    const imageFactor = configuration.imageFactor || 0.65
+    const fontSizeMax = configuration.fontSizeMax || 100
+    const fieldSpacingMax = configuration.fieldSpacingMax || 100
+    
+    if (!["center", "left", "right"].includes(align))
+        throw new Error("invalid align configuration")
+
+    const orientation = "portrait", format = "a4"
+    const options = {
+        orientation: orientation,
+        unit: "mm",
+        format: format,
+        compress: true
+    }
+    const doc = new jsPDF(options)
+    const pageWidth = doc.internal.pageSize.width
+    const pageHeight = doc.internal.pageSize.height
+
+    const fitsProperly = () => {
+        return (pageWidth >= tagWidth * columns + columnSpacing * (columns - 1)) &&
+            (pageHeight >= tagHeight * rows + rowSpacing * (rows - 1))
+    }
+
+    if (!fitsProperly())
+        throw new Error("does not fit properly")
+
+    const pageMarginX = (pageWidth - (tagWidth * columns + columnSpacing * (columns - 1))) / 2
+    const pageMarginY = (pageHeight - (tagHeight * rows + rowSpacing * (rows - 1))) / 2
+
+    let idx = 0
+    const addTagsToPDF = () => {
+        let exit = false
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < columns; j++) {
+                if (idx >= data.length) {
+                    exit = true
+                    break
+                }
+                doc.setFont(font, "bold")
+                // Tag rectangle
+                const x = pageMarginX + j * (tagWidth + columnSpacing)
+                const y = pageMarginY + i * (tagHeight + rowSpacing)
+                if (drawTagRectangle)
+                    doc.rect(x, y, tagWidth, tagHeight, "S")
+
+                // Artwork image
+                const image = images[idx]
+                const imageProperties = doc.getImageProperties(image)
+
+                const widthRatio = tagWidth / imageProperties.width;
+                const heightRatio = tagHeight / imageProperties.height;
+                const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
+
+                const imageWidth = imageProperties.width * ratio * imageFactor;
+                const imageHeight = imageProperties.height * ratio * imageFactor;
+
+                let tagMarginX, tagMarginY
+                if (tagOrientation === "horizontal") {
+                    tagMarginX = (tagWidth - imageWidth) * 0.25;
+                    tagMarginY = (tagHeight - imageHeight) * 0.5;
+                } else {
+                    tagMarginX = (tagWidth - imageWidth) * 0.5;
+                    tagMarginY = (tagHeight - imageHeight) * 0.25;
+                }
+
+                doc.addImage(image, imageProperties.fileType, x + tagMarginX, y + tagMarginY, imageWidth, imageHeight)
+                if (drawImageRectangle)
+                    doc.rect(x + tagMarginX, y + tagMarginY, imageWidth, imageHeight, "S")
+
+                let textMarginX, textMarginY
+                if (tagOrientation === "horizontal") {
+                    let factor
+                    if (align === "left") factor = 0.05
+                    else if (align === "center") factor = 0.5
+                    else if (align === "right") factor = 0.95
+                    textMarginX = (tagWidth - (tagMarginX + imageWidth)) * factor
+                    textMarginY = (tagHeight - tagMarginY) * 0.05
+                } else {
+                    if (align === "left") textMarginX = (tagWidth - 2 * tagMarginX) * 0.05
+                    else if (align === "center") textMarginX = (tagWidth - 2 * tagMarginX) * 0.5
+                    else if (align === "right") textMarginX = (tagWidth - 2 * tagMarginX) * 0.95
+                    textMarginY = (tagHeight - (tagMarginY + imageHeight)) * 0.05
+                }
+
+                // Define fontSize
+                const spaceRequired = (element, space) => {
+                    if (space === "width") {
+                        return element.reduce((prev, current) => {
+                            let value = null
+                            if (!current) value = 0
+                            else if (typeof (current) === "string")
+                                value = doc.getTextDimensions(current).w
+                            else if (typeof (current) !== "string")
+                                value = doc.getTextDimensions(current.toString()).w
+                            return Math.max(prev, value)
+                        }, 0)
+                    }
+                    return doc.getTextDimensions("A").h * element.length
+                }
+
+                const heightRequired = spaceRequired(data[idx], "height")
+                let spaceWidth, spaceHeight
+                if (tagOrientation === "horizontal") {
+                    if (align === "left" || align === "right")
+                        spaceWidth = tagWidth - (2 * tagMarginX + imageWidth + textMarginX)
+                    else if (align === "center")
+                        spaceWidth = tagWidth - (2 * tagMarginX + imageWidth)
+
+                    spaceHeight = tagHeight - (2 * (tagMarginY + textMarginY))
+                } else {
+                    if (align === "left" || align === "right")
+                        spaceWidth = tagWidth - 2 * (tagMarginX + textMarginX)
+                    else if (align === "center")
+                        spaceWidth = tagWidth - 2 * (tagMarginX)
+
+                    spaceHeight = tagHeight - (2 * (tagMarginY + textMarginY) + imageHeight)
+                }
+
+                const heightRequiredPerField = heightRequired / data[idx].length
+                const heightPerField = spaceHeight / data[idx].length
+                const fontHeightFactor = doc.getFontSize() / heightRequiredPerField
+                let fontSize = heightPerField * fontHeightFactor
+                doc.setFontSize(Math.min(fontSize, fontSizeMax))
+
+                const widthRequired = spaceRequired(data[idx], "width")
+                const fontWidthFactor = doc.getFontSize() / widthRequired
+                if (widthRequired > spaceWidth) {
+                    fontSize = spaceWidth * fontWidthFactor
+                    doc.setFontSize(Math.min(fontSize, fontSizeMax))
+                }
+
+                // Artwork information
+                let posx, posy
+                if (tagOrientation === "horizontal") {
+                    posx = x + tagMarginX + imageWidth + textMarginX
+                    posy = y + tagMarginY + textMarginY * 0.5
+                } else {
+                    posx = x + tagMarginX + textMarginX
+                    posy = y + tagMarginY + imageHeight + textMarginY
+                }
+
+                const characterHeight = doc.getTextDimensions("A").h
+                const textHeight = characterHeight * data[idx].length
+                let fieldSpacing
+                if (tagOrientation == "horizontal")
+                    fieldSpacing = (tagHeight - (2 * (tagMarginY + textMarginY) + textHeight)) / (data[idx].length - 1)
+                else
+                    fieldSpacing = (tagHeight - (2 * (tagMarginY + textMarginY) + imageHeight + textHeight)) / (data[idx].length - 1)
+                
+                fieldSpacing = Math.min(fieldSpacing, fieldSpacingMax)
+                
+                for (let info = 0; info < data[idx].length; info++) {
+                    if (info === 0) doc.setFont(font, "bold")
+                    else if (info === 1) doc.setFont(font, "italic")
+                    else doc.setFont(font, "normal")
+                    doc.text(data[idx][info], posx, posy + (info + 1) * (characterHeight) + info * fieldSpacing, { align: align })
+                }
+
+                idx++
+            }
+            if (exit) break
+        }
+    }
+
+    const sheetsNumber = Math.ceil(data.length / (rows * columns))
+    for (let sheets = 0; sheets < sheetsNumber; sheets++) {
+        if (sheets > 0) doc.addPage(format, orientation)
+        addTagsToPDF()
+    }
+    doc.save(filename)
 }
