@@ -90,7 +90,7 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
 
     const { width: tagWidth, height: tagHeight, rows, columns } = configuration
     const drawImageRectangle = configuration.drawImageRectangle || Boolean(false)
-    const drawTagRectangle = configuration.drawTagRectangle && Boolean(true)
+    const drawTagRectangle = (configuration.drawTagRectangle === null) ? true : configuration.drawTagRectangle
     const align = configuration.align || "left"
     const font = configuration.font || "helvetica"
     const rowSpacing = configuration.rowSpacing || 0.5

@@ -1,5 +1,4 @@
-import React from 'react'
-import jsPDF from 'jspdf'
+import { React, useState } from 'react'
 import testImage from '../static/images/test.png'
 import testImage2 from '../static/images/logo192.png'
 import testImage3 from '../static/images/logo512.png'
@@ -57,7 +56,9 @@ const exportGalleryFormatToPDF = (data, images, artworksPerSheet = 1) => {
 
 
 export const ExportGalleryReport = () => {
-    const execute = () => {
+    const [artworksPerSheet, setArtworksPerSheet] = useState(1)
+
+    const execute = (k) => {
         const artworks = []
         const images = [testImage, testImage2, testImage3, testImage3, testImage3] 
 		for (let i = 1; i <= 5; i++){
@@ -66,12 +67,13 @@ export const ExportGalleryReport = () => {
         }
 
         const data = getArtworksData(artworks, keysForGalleryFormat)
-        exportGalleryFormatToPDF(data, images, 3)
+        exportGalleryFormatToPDF(data, images, k)
     }
 
     return (
         <div>
-            <button onClick={() => execute()}>Generar reporte galeria</button>
+            <button onClick={() => execute(artworksPerSheet)}>Generar reporte en formato galeria</button>
+            <input type="number" onChange={(e) => setArtworksPerSheet(e.target.value)} ></input>
         </div>
     )
 }
