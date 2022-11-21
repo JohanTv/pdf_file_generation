@@ -90,7 +90,7 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
 
     const { width: tagWidth, height: tagHeight, rows, columns } = configuration
     const drawImageRectangle = configuration.drawImageRectangle || Boolean(false)
-    const drawTagRectangle = (configuration.drawTagRectangle === null) ? true : configuration.drawTagRectangle
+    const drawTagRectangle = (configuration.drawTagRectangle === undefined) ? true : configuration.drawTagRectangle
     const align = configuration.align || "left"
     const font = configuration.font || "helvetica"
     const rowSpacing = configuration.rowSpacing || 0.5
@@ -170,18 +170,17 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
                 if (drawImageRectangle)
                     doc.rect(x + tagMarginX, y + tagMarginY, imageWidth, imageHeight, "S")
 
-                let textMarginX, textMarginY
+                let textMarginX, textMarginY, factor
+                
+                if (align === "left") factor = 0.05
+                else if (align === "center") factor = 0.5
+                else if (align === "right") factor = 0.95
+
                 if (tagOrientation === "horizontal") {
-                    let factor
-                    if (align === "left") factor = 0.05
-                    else if (align === "center") factor = 0.5
-                    else if (align === "right") factor = 0.95
                     textMarginX = (tagWidth - (tagMarginX + imageWidth)) * factor
                     textMarginY = (tagHeight - tagMarginY) * 0.05
                 } else {
-                    if (align === "left") textMarginX = (tagWidth - 2 * tagMarginX) * 0.05
-                    else if (align === "center") textMarginX = (tagWidth - 2 * tagMarginX) * 0.5
-                    else if (align === "right") textMarginX = (tagWidth - 2 * tagMarginX) * 0.95
+                    textMarginX = (tagWidth - 2 * tagMarginX) * factor
                     textMarginY = (tagHeight - (tagMarginY + imageHeight)) * 0.05
                 }
 
