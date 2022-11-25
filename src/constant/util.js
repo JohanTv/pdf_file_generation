@@ -165,8 +165,10 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
                     tagMarginX = (tagWidth - imageWidth) * 0.5;
                     tagMarginY = (tagHeight - imageHeight) * 0.25;
                 }
-                doc.addImage(image, imageProperties.fileType, x + tagMarginX, y + tagMarginY, imageWidth, imageHeight)
-                if (drawImageRectangle)
+                
+                if(image)
+                    doc.addImage(image, imageProperties.fileType, x + tagMarginX, y + tagMarginY, imageWidth, imageHeight)
+                if (drawImageRectangle && image)
                     doc.rect(x + tagMarginX, y + tagMarginY, imageWidth, imageHeight, "S")
 
                 let textMarginX, textMarginY, factor
