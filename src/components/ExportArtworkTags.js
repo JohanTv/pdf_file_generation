@@ -1,5 +1,4 @@
 import React from 'react'
-import jsPDF from 'jspdf'
 import testImage2 from '../static/images/logo192.png'
 import { artwork, keysForGalleryFormat, getArtworksData, exportTags } from '../constant/util'
 

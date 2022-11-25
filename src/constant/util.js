@@ -165,7 +165,6 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
                     tagMarginX = (tagWidth - imageWidth) * 0.5;
                     tagMarginY = (tagHeight - imageHeight) * 0.25;
                 }
-
                 doc.addImage(image, imageProperties.fileType, x + tagMarginX, y + tagMarginY, imageWidth, imageHeight)
                 if (drawImageRectangle)
                     doc.rect(x + tagMarginX, y + tagMarginY, imageWidth, imageHeight, "S")
@@ -252,7 +251,7 @@ export const exportTags = (data, images, configuration, filename = "etiquetas.pd
                 const characterHeight = doc.getTextDimensions("A").h
                 const textHeight = characterHeight * data[idx].length
                 let fieldSpacing
-                if (tagOrientation == "horizontal")
+                if (tagOrientation === "horizontal")
                     fieldSpacing = (tagHeight - (2 * (tagMarginY + textMarginY) + textHeight)) / (data[idx].length - 1)
                 else
                     fieldSpacing = (tagHeight - (2 * (tagMarginY + textMarginY) + imageHeight + textHeight)) / (data[idx].length - 1)

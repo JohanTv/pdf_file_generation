@@ -13,7 +13,7 @@ const exportGalleryFormatToPDF = (data, images, artworksPerSheet = 1) => {
         drawTagRectangle: false,
     }
 
-    if (artworksPerSheet == 1) {
+    if (artworksPerSheet === 1) {
         configuration = {
             ...configuration,
             width: 163.3,
